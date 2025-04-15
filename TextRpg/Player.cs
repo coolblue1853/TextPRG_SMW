@@ -16,6 +16,8 @@ namespace TextRpg
         public int _hp { get; private set; }
         public int _gold { get; private set; }
 
+        private Dictionary<string, int> additionalStat = new Dictionary<string, int>();
+
         protected Player(PlayerType type)
         {
             _playerType = type;
@@ -30,6 +32,32 @@ namespace TextRpg
             _defense = job.Defense;
             _hp = job.MaxHP;
             _gold = gold;
+        }
+
+
+        public Dictionary<string, int> GetAdditionalStat()
+        {
+            return additionalStat;
+        }
+        public void AddAddtionalStat(string key, int value)
+        {
+            if (additionalStat.ContainsKey(key))
+                additionalStat[key] += value;
+            else
+                additionalStat.Add(key, value);
+        }
+        public void DeleteAddtionalStat(string key, int value)
+        {
+            if (additionalStat.ContainsKey(key))
+            {
+                additionalStat[key] -= value;
+                if (additionalStat[key] == 0)
+                    additionalStat.Remove(key);
+            }
+        }
+        public void SetGold(int value)
+        {
+            _gold += value;
         }
     }
 

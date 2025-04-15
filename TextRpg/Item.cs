@@ -37,7 +37,7 @@ namespace TextRpg
 
         public static Item Create(int itemIdx)
         {
-            var itemData = Database.items[itemIdx];
+            var itemData = Database.itemData[itemIdx];
             ItemType type = (ItemType)Enum.Parse(typeof(ItemType), itemData.Type);
 
 
@@ -54,6 +54,10 @@ namespace TextRpg
         public Dictionary<string, int> GetEffect()
         {
             return _effectsDict;
+        }
+        public void TogleEquipState()
+        {
+            _isEquip = !_isEquip;
         }
     }
 

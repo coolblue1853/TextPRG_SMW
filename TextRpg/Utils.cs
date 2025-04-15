@@ -25,5 +25,16 @@ namespace TextRpg
         {
             Console.WriteLine(sb);
         }
+        public static string AddEffectText(Item item)
+        {
+            StringBuilder effectSB = new StringBuilder();
+            foreach (var value in item.GetEffect())
+            {
+                effectSB.Append($"{value.Key} + {value.Value} ");
+            }
+
+            return effectSB.ToString();
+        }
+
     }
 }

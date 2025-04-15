@@ -10,7 +10,10 @@ namespace TextRpg
         SetChar = 1,
         Town = 2,
         CheckStat = 3,
-        Inventory = 4
+        Inventory = 4,
+        Equip = 5,
+        Shop = 6,
+        Buy = 7,
     }
 
     public enum PlayerType
@@ -24,4 +27,11 @@ namespace TextRpg
         Weapon = 1,
         Armor = 2
     }
+    public enum AdditionalStat
+    {
+        None = 0,
+        ATK = 1,
+        DEF = 2,
+    }
+
 }

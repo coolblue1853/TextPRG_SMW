@@ -8,11 +8,19 @@ namespace TextRpg
     {
         //DB
         public static List<JobData> jobs; // 직업 관련 
-        public static List<ItemData> items; // 직업 관련 
+        public static List<ItemData> itemData; // 아이템 관련
+        public static List<Item> items = new List<Item>(); // 아이템 관련
         public static void SetData()
         {
             jobs = DataLoader.LoadJobs();
-            items = DataLoader.LoadItems();
+            itemData = DataLoader.LoadItems();
+            foreach(var value in itemData)
+            {
+                Item item = Item.Create(value.Id);
+                if (item != null)
+                    items.Add(item);
+            }
+            Shop.Init();
         }
 
     }

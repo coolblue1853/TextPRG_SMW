@@ -13,25 +13,47 @@ namespace TextRpg
         {
             inventory.Add(item);
         }
-        public static void ShowInventory()
+        public static int GetInventorySize() { return inventory.Count; }
+        public static void AddInventoryStringBuiler(bool isShowNum = false)
         {
             for(int i = 1; i < inventory.Count+1; i++)
             {
                 Item item = inventory[i-1];
-                Utils.UpdateStringBuilder($"- {i}  {item._name} | {AddEffectText(item)} | {item._description}");
+
+                string equipText = "";
+                if (item._isEquip)
+                    equipText = "[E]";
+
+                if (isShowNum)
+                    Utils.UpdateStringBuilder($"- {equipText} {i} ");
+                else
+                    Utils.UpdateStringBuilder($"- {equipText}");
+
+                Utils.UpdateStringBuilder($"{item._name} | {Utils.AddEffectText(item)} | {item._description}\n");
             }
-            Utils.ShowStringBuilder();
+            Utils.UpdateStringBuilder("\n\n");
         }
 
-        public static string AddEffectText(Item item)
-        {
-            StringBuilder effectSB = new StringBuilder();
-            foreach(var value in item.GetEffect())
-            {
-                effectSB.Append($"{value.Key} + {value.Value} ");
-            }
 
-            return effectSB.ToString();
+
+        // 토글 방식으로 작동
+        public static void EquipItem(int index)
+        {
+            Item item = inventory[index - 1];
+            //토글
+            item.TogleEquipState();
+
+            // 장착 해제에 따른 효과 반영
+
+      
+            foreach (var value in item.GetEffect())
+            {
+                if (item._isEquip) // 효과 추가
+                    GameManager.myPlayer.AddAddtionalStat(value.Key, value.Value);
+                else // 효과 감소
+                    GameManager.myPlayer.DeleteAddtionalStat(value.Key, value.Value);
+            }
+    
         }
     }
 }
