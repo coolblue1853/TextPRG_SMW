@@ -12,9 +12,14 @@ namespace TextRpg
             Array values = Enum.GetValues(inputEnum.GetType());
             return Array.IndexOf(values, inputEnum);
         }
-        public static void UpdateStringBuilder(string text)
+        public static void UpdateStringBuilder(string text, bool isShow = false, bool isClear = false)
         {
+            if (isClear)
+                ClearStringBuilder();
+
             sb.Append(text);
+            if (isShow)
+                ShowStringBuilder();
         }
         public static void ClearStringBuilder()
         {
@@ -24,6 +29,10 @@ namespace TextRpg
         public static void ShowStringBuilder()
         {
             Console.WriteLine(sb);
+        }
+        public static void ReadLine(out string line)
+        {
+            line = Console.ReadLine();
         }
         public static string AddEffectText(Item item)
         {
@@ -35,6 +44,9 @@ namespace TextRpg
 
             return effectSB.ToString();
         }
+
+
+        
 
     }
 }

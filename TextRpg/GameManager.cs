@@ -11,6 +11,7 @@ namespace TextRpg
         static GameState state = GameState.None;
         static int waitTime = 100; // 대기시간
         static string action;
+        static bool showErrorOnce = false;
         static void Main(string[] args)
         {
             Init();
@@ -44,7 +45,6 @@ namespace TextRpg
                         break;
                 }
             }
- 
         }
 
         static void Init()
@@ -53,43 +53,58 @@ namespace TextRpg
             ChangeState(GameState.SetChar);
         }
 
-        static void SetCharacter()
+        static void SetCharacter() 
         {
-            Utils.UpdateStringBuilder("스파르타 던전에 오신 여러분 환영합니다\n");
-            Utils.UpdateStringBuilder("원하시는 닉네임을 설정해 주세요 : ");
-            Utils.ShowStringBuilder();
-            string nickName = Console.ReadLine();
-            Utils.ClearStringBuilder();
+            Utils.UpdateStringBuilder(Database.sceneDatas.Intro.welcome, true, true);
+            Utils.ReadLine(out string nickName);
 
-            Utils.UpdateStringBuilder("원하시는 직업을 설정해 주세요 : \n");
-            Utils.UpdateStringBuilder("1. 전사");
-            Utils.ShowStringBuilder();
+            bool isError = false;
 
-             action = Console.ReadLine();
-            if (int.TryParse(action, out int num)) // 예외처리
+            while (true)
             {
-                Utils.ClearStringBuilder();
+                string input = GetJobInput(isError);
 
-                switch (num)
+                if (int.TryParse(input, out int num))   // 예외처리 받아야함 tryCatch 로 잡아보면 좋을듯?
                 {
-                    case 1:
-                        myPlayer = new Warrior();
-                        myPlayer.SetInfo(nickName, Database.jobs[Utils.GetEnumIndex(PlayerType.Warrior)]);
-                        break;
+                    switch (num)
+                    {
+                        case 1:
+                            myPlayer = new Warrior();
+                            myPlayer.SetInfo(nickName, Database.jobs[Utils.GetEnumIndex(PlayerType.Warrior)]);
+                            ChangeState(GameState.Town);
+                            return;
+                        // TODO: 다른 직업도 추가
+                        default:
+                            isError = true;
+                            break;
+                    }
                 }
+                else
+                {
+                    isError = true;
+                }
+            }
+        }
 
-                ChangeState(GameState.Town);
+
+        static string GetJobInput(bool showError)
+        {
+
+            if (showError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Intro.choose_job, false, true);
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, true);
             }
             else
-            {
-                Utils.ClearStringBuilder();
-                Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
-            }
+                Utils.UpdateStringBuilder(Database.sceneDatas.Intro.choose_job, true, true);
+
+            Utils.ReadLine(out string input);
+            return input;
         }
 
         static void Town()
         {
-
+            Utils.ClearStringBuilder();
             Utils.UpdateStringBuilder("스파르타 마을에 오신 여러분 환영합니다\n");
             Utils.UpdateStringBuilder("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다\n");
             Utils.UpdateStringBuilder("1. 상태보기\n2. 인벤토리\n3. 상점\n");
