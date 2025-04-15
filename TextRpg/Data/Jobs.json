@@ -1,0 +1,10 @@
+// jobs.json
+[
+  {
+    "Name": "전사",
+    "MaxHP": 100,
+    "Attack": 10,
+    "Defense": 5
+  }
+
+]
