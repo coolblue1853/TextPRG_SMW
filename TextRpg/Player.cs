@@ -21,7 +21,7 @@ namespace TextRpg
             _playerType = type;
         }
 
-        public void SetInfo(string name, Job job,int level = 1,int gold = 1500)
+        public virtual void SetInfo(string name, JobData job,int level = 1,int gold = 1500)
         {
             _nickName = name;
             _className = job.Name;
@@ -46,5 +46,11 @@ namespace TextRpg
         public Warrior() : base(PlayerType.Warrior)
         {
         }
+
+        public override void SetInfo(string name, JobData job, int level = 1, int gold = 1500)
+        {
+            base.SetInfo(name, job, level, gold);
+        }
+
     }
 }

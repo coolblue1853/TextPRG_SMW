@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TextRpg
 {
-    public class Job
+    public class JobData
     {
         public string Name { get; set; }
         public int MaxHP { get; set; }

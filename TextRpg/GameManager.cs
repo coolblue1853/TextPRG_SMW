@@ -16,6 +16,8 @@ namespace TextRpg
         {
             Init();
 
+
+            /*
             while (true) // 게임 루프
             {
                 switch (state)
@@ -30,18 +32,22 @@ namespace TextRpg
                         CheckStat();
                         break;
                     case GameState.Inventory:
-                        CheckStat();
+                        ShowInventory();
                         break;
                     default:
                         Thread.Sleep(waitTime);
                         break;
                 }
             }
+         */
         }
 
         static void Init()
         {
             Database.SetData();
+            Item item = Item.Create(3);
+            Inventory.AddItem(item);
+            Inventory.ShowInventory();
             ChangeState(GameState.SetChar);
         }
 
@@ -89,6 +95,9 @@ namespace TextRpg
                 case 1:
                     ChangeState(GameState.CheckStat);
                     break;
+                case 2:
+                    ChangeState(GameState.Inventory);
+                    break;
             }
         }
 
@@ -117,17 +126,15 @@ namespace TextRpg
             }
         }
 
-        static void Inventory()
+        static void ShowInventory()
         {
 
-            Utils.UpdateStringBuilder(sb, "당신에 대한 정보 입니다.\n");
-            Utils.UpdateStringBuilder(sb, $"Lv. {myPlayer.GetLevel()}\n");
-            Utils.UpdateStringBuilder(sb, $"{myPlayer.GetNickName()} ( {myPlayer.GetClass()} )\n");
-            Utils.UpdateStringBuilder(sb, $"공격력 : {myPlayer.GetAttack()}\n");
-            Utils.UpdateStringBuilder(sb, $"방어력 : {myPlayer.GetDefense()}\n");
-            Utils.UpdateStringBuilder(sb, $"체  력 : {myPlayer.GetHP()}\n");
-            Utils.UpdateStringBuilder(sb, $"Gold : {myPlayer.GetGold()}\n\n");
-            Utils.UpdateStringBuilder(sb, "0. 나가기\n");
+            Utils.UpdateStringBuilder(sb, "[아이템 목록]\n");
+            // 목록 보기
+
+            Utils.UpdateStringBuilder(sb, "\n1. 장착 관리\n");
+            Utils.UpdateStringBuilder(sb, "0. 나가기\n\n");
+            Utils.UpdateStringBuilder(sb, "원하시는 행동을 입력해 주세요\n>>");
             Utils.ShowStringBuilder(sb);
             action = int.Parse(Console.ReadLine());
             Utils.ClearStringBuilder(sb);
@@ -135,6 +142,9 @@ namespace TextRpg
             switch (action)
             {
                 case 0:
+                    ChangeState(GameState.Town);
+                    break;
+                case 1:
                     ChangeState(GameState.Town);
                     break;
                 default:

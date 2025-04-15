@@ -7,11 +7,12 @@ namespace TextRpg
      class Database
     {
         //DB
-        public static List<Job> jobs; // 직업 관련 
-
+        public static List<JobData> jobs; // 직업 관련 
+        public static List<ItemData> items; // 직업 관련 
         public static void SetData()
         {
-            jobs = DataLoader.LoadJobs(DataLoader.job);
+            jobs = DataLoader.LoadJobs();
+            items = DataLoader.LoadItems();
         }
 
     }

@@ -15,7 +15,13 @@ namespace TextRpg
 
     public enum PlayerType
     {
-        Unknown = 0,
+        None = 0,
         Warrior = 1
+    }
+    public enum ItemType
+    {
+        None = 0,
+        Weapon = 1,
+        Armor = 2
     }
 }

@@ -8,11 +8,17 @@ namespace TextRpg
 
     internal class DataLoader
     {
-        public static string job = "../../../Data/jobs.json";
-        public static List<Job> LoadJobs(string path)
+        public static string job = "../../../Json/jobs.json";
+        public static string item = "../../../Json/items.json";
+        public static List<JobData> LoadJobs()
         {
-            string json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<List<Job>>(json);
+            string json = File.ReadAllText(job);
+            return JsonConvert.DeserializeObject<List<JobData>>(json);
+        }
+        public static List<ItemData> LoadItems()
+        {
+            string json = File.ReadAllText(item);
+            return JsonConvert.DeserializeObject<List<ItemData>>(json);
         }
     }
 }
