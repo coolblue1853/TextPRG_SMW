@@ -7,14 +7,14 @@ namespace TextRpg
 
     class Player
     {
-        protected PlayerType _playerType;
-        protected string _nickName;
-        protected string _className;
-        protected int _level;
-        protected int _attack;
-        protected int _defense;
-        protected int _hp;
-        protected int _gold;
+        public PlayerType _playerType {  get; private set; }
+        public string _nickName { get; private set; }
+        public string _className { get; private set; }
+        public int _level { get; private set; }
+        public int _attack { get; private set; }
+        public int _defense { get; private set; }
+        public int _hp { get; private set; }
+        public int _gold { get; private set; }
 
         protected Player(PlayerType type)
         {
@@ -31,14 +31,6 @@ namespace TextRpg
             _hp = job.MaxHP;
             _gold = gold;
         }
-
-        public string GetNickName() { return _nickName; }
-        public string GetClass() { return _className; }
-        public int GetLevel() { return _level; }
-        public int GetAttack() { return _attack; }
-        public int GetDefense() { return _defense; }
-        public int GetHP() { return _hp; }
-        public int GetGold() { return _gold; }
     }
 
     class Warrior : Player

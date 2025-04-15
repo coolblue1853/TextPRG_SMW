@@ -8,13 +8,14 @@ namespace TextRpg
 {
     class Item
     {
-        protected ItemType _itemType;
-        protected int _id;
-        protected string _name;
-        protected Dictionary<string, int> _effectsDict;
-        protected string _description;
-        protected int _price;
-        protected bool _isEquip;
+        public ItemType _itemType { get; private set; }
+        public int _id { get; private set; }
+        public string _name { get; private set; }
+        public string _description { get; private set; }
+        public int _price { get; private set; }
+        public bool _isEquip { get; private set; }
+
+        protected Dictionary<string, int> _effectsDict = new Dictionary<string, int>();
 
         protected Item() { }
 
@@ -49,6 +50,10 @@ namespace TextRpg
             }
             // 위의 케이스가 아니면 null 반환
             return null;
+        }
+        public Dictionary<string, int> GetEffect()
+        {
+            return _effectsDict;
         }
     }
 
