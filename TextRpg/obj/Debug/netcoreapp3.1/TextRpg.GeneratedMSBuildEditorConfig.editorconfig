@@ -1,6 +1,6 @@
 is_global = true
 build_property.RootNamespace = TextRpg
-build_property.ProjectDir = C:\Users\Coolblue\Documents\GitHub\TextRpg\TextRpg\
+build_property.ProjectDir = C:\Users\Coolblue\Documents\GitHub\TextPRG_SMW\TextRpg\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false

@@ -8,7 +8,7 @@ namespace TextRpg
     {
         public string Name { get; set; }
         public int MaxHP { get; set; }
-        public int Atk { get; set; }
-        public int Def { get; set; }
+        public int Attack { get; set; }
+        public int Defense { get; set; }
     }
 }
