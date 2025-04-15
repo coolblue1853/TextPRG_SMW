@@ -33,5 +33,4 @@ namespace TextRpg
         ATK = 1,
         DEF = 2,
     }
-
 }

@@ -12,20 +12,11 @@ namespace TextRpg
         public static void Init()
         {
             foreach (var value in Database.items)
-            {
                 shopItems.Add(value, false);
-            }
         }
         public static int GetShopSize()
         {
             return shopItems.Count;
-        }
-        public void ShowShopText()
-        {
-            foreach (var item in shopItems)
-            {
-
-            }
         }
         public static void AddShopStringBuiler(bool isShowNum = false)
         {
@@ -64,18 +55,10 @@ namespace TextRpg
                     Utils.UpdateStringBuilder("구매를 완료했습니다.\n");
                 }
                 else
-                {
                     Utils.UpdateStringBuilder("Gold가 부족합니다.\n");
-                }
-      
             }
             else
-            {
                 Utils.UpdateStringBuilder("이미 구매한 아이템 입니다.\n");
-            }
-
-     
-
         }
     }
 }

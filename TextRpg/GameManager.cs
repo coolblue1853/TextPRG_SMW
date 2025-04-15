@@ -15,6 +15,10 @@ namespace TextRpg
         static void Main(string[] args)
         {
             Init();
+            GameLoop();
+        }
+        static void GameLoop()
+        {
             while (true) // 게임 루프
             {
                 switch (state)
@@ -80,9 +84,7 @@ namespace TextRpg
                     }
                 }
                 else
-                {
                     isError = true;
-                }
             }
         }
 

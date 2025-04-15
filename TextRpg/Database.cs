@@ -13,9 +13,9 @@ namespace TextRpg
         public static List<Item> items = new List<Item>(); // 아이템 관련
         public static void SetData()
         {
-            jobs = DataLoader.LoadJobs();
-            itemData = DataLoader.LoadItems();
-            sceneDatas = DataLoader.LoadSceneText();
+            jobs = DataLoader.LoadData<List<JobData>>(DataLoader.job);
+            itemData = DataLoader.LoadData<List<ItemData>>(DataLoader.item);
+            sceneDatas = DataLoader.LoadData<SceneTextData>(DataLoader.sceneText);
 
             foreach (var value in itemData)
             {
