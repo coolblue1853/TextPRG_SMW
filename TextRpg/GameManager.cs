@@ -11,9 +11,14 @@ namespace TextRpg
         public static Player myPlayer;
         static GameState state = GameState.None;
         static int waitTime = 100; // 대기시간
-        static string action;
         static bool isShowError = false;
         static string shopText = "";
+        //던전관련
+        static   Dictionary<string, string> resultDict = new Dictionary<string, string>();
+        static bool isDungeonSuccess = false;
+        // 쉼터 관련
+        static bool? isRestore = null;
+
         static void Main(string[] args)
         {
             Init();
@@ -45,6 +50,15 @@ namespace TextRpg
                         break;
                     case GameState.Buy:
                         ShowShop(true);
+                        break;
+                    case GameState.Dungeon:
+                        GoDungeon();
+                        break;
+                    case GameState.DungeonResult:
+                        ResultDungeon();
+                        break;
+                    case GameState.Restore:
+                        GoRestore();
                         break;
                     default:
                         Thread.Sleep(waitTime);
@@ -129,6 +143,12 @@ namespace TextRpg
                     case 3:
                         ChangeState(GameState.Shop);
                         break;
+                    case 4:
+                        ChangeState(GameState.Dungeon);
+                        break;
+                    case 5:
+                        ChangeState(GameState.Restore);
+                        break;
                     default:
                         isShowError = true;
                         break;
@@ -173,7 +193,6 @@ namespace TextRpg
                 isShowError = true;
             }
         }
-
         static void CheckAdditionalStat(AdditionalStat additionalStat)
         {
             if (myPlayer.GetAdditionalStat().TryGetValue(additionalStat, out int value))
@@ -186,10 +205,9 @@ namespace TextRpg
             else
                 Utils.UpdateStringBuilder($"\n");
         }
-
         static void ShowInventory(bool isEqiup = false)
         {
-            Utils.UpdateStringBuilder(Database.sceneDatas.Inventory.benner,false,true);
+            Utils.UpdateStringBuilder(Database.sceneDatas.Inventory.banner,false,true);
             Inventory.AddInventoryStringBuiler(isEqiup);
 
             if (!isEqiup)
@@ -246,10 +264,9 @@ namespace TextRpg
                 isShowError = true;
             }
         }
-
         public static void ShowShop(bool isBuy = false)
         {
-            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Shop.benner, myPlayer.GetFormattedStats()), false, true);
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Shop.banner, myPlayer.GetFormattedStats()), false, true);
             Shop.AddShopStringBuiler(isBuy);
             if (isBuy == false)
             {
@@ -314,8 +331,155 @@ namespace TextRpg
                 isShowError = true;
             }
         }
+        public static void GoDungeon()
+        {
 
+            Utils.ClearStringBuilder();
+            foreach(var value in Database.dungeonFormat)
+            {
+                Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Dungeon.banner, value), false, false);
+            }
+            Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, !isShowError); 
 
+            if(isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+            
+            Utils.ReadLine(out string action);
+            
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+                if (num == 0)
+                {
+                    ChangeState(GameState.Town);
+                }
+                else if (num <= Dungeon.GetDungeonCount())
+                {
+                    var result = Dungeon.IntoDungoen(myPlayer, num);
+                    (bool isSuccess, int reduceHp, int resultGold, string name) = result;
+                    isDungeonSuccess = isSuccess;
+
+                    resultDict = new Dictionary<string, string>()
+                        {
+                            { "name" ,name },
+                            { "beforHp", myPlayer._hp.ToString() },
+                            { "afterHp", (myPlayer._hp - reduceHp).ToString() },
+                            { "beforeGold", myPlayer._gold.ToString() },
+                            { "afterGold", (myPlayer._gold + resultGold).ToString()},
+                        };
+
+                    myPlayer.ChangeHp(-reduceHp);
+                    myPlayer.ChangeGold(resultGold);
+
+                    ChangeState(GameState.DungeonResult);
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+        static void ResultDungeon()
+        {
+            if (isDungeonSuccess)
+            {
+                myPlayer.ChangeExp(1);
+                Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Dungeon.reuslt_succ, resultDict), false, true);
+                Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, !isShowError);
+            }
+            else
+            {
+                Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Dungeon.reuslt_fail, resultDict), false, true);
+                Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, !isShowError);
+            }
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+                switch (num)
+                {
+                    case 0:
+                        ChangeState(GameState.Dungeon);
+                        break;
+                    default:
+                        isShowError = true;
+                        break;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+
+        static void GoRestore()
+        {
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Restore.banner, myPlayer.GetFormattedStats()), false, true);
+            Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, (!isShowError&& isRestore == null));
+            if (isRestore != null)
+            {
+                if (isRestore == true)
+                {
+                    Utils.UpdateStringBuilder(Database.sceneDatas.Restore.succ, !isShowError);
+                }
+                else
+                {
+                    Utils.UpdateStringBuilder(Database.sceneDatas.Restore.fail, !isShowError);
+                }
+                isRestore = null;
+            }
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+            }
+
+            isShowError = false;
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+                switch (num)
+                {
+                    case 0:
+                        ChangeState(GameState.Town);
+                        break;
+                    case 1:
+                        isRestore = TryToRestore();
+                        break;
+                    default:
+                        isShowError = true;
+                        break;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+
+       static bool TryToRestore()
+        {
+            int nowGold = myPlayer._gold;
+            if(nowGold >= 500)
+            {
+                myPlayer.ChangeGold(-500);
+                myPlayer.SetHp(100);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         static void ChangeState(GameState changeState)
         {
             state = changeState;

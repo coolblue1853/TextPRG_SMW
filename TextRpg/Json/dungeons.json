@@ -1,0 +1,36 @@
+[
+  {
+    "Idx": 1,
+    "Name": "쉬운 던전",
+    "Defense": 5,
+    "Gold": 1000,
+    "DefenseProbability": 0.4,
+    "FailHealthDivied": 2,
+    "MinUseHp": 20,
+    "MaxUseHp": 35,
+    "GoldRatio": 2
+
+  },
+  {
+    "Idx": 2,
+    "Name": "일반 던전",
+    "Defense": 11,
+    "Gold": 1700,
+    "DefenseProbability": 0.4,
+    "FailHealthDivied": 2,
+    "MinUseHp": 20,
+    "MaxUseHp": 35,
+    "GoldRatio": 2
+  },
+  {
+    "Idx": 3,
+    "Name": "어려운 던전",
+    "Defense": 17,
+    "Gold": 2500,
+    "DefenseProbability": 0.4,
+    "FailHealthDivied": 2,
+    "MinUseHp": 20,
+    "MaxUseHp": 35,
+    "GoldRatio": 2
+  }
+]

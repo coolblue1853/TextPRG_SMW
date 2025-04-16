@@ -44,8 +44,6 @@ namespace TextRpg
                 else
                     effectSB.Append($"{value.Key} {value.Value} ");
             }
-
-
             return effectSB.ToString();
         }
     }

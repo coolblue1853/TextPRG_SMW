@@ -51,7 +51,7 @@ namespace TextRpg
                 {
                     shopItems[item] = true;
                     Inventory.AddItem(item);
-                    GameManager.myPlayer.SetGold(-item._price);
+                    GameManager.myPlayer.ChangeGold(-item._price);
                     return Database.sceneDatas.Shop.buy_Succ;
                 }
                 else

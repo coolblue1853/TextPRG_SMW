@@ -8,6 +8,7 @@ namespace TextRpg
     internal class Inventory
     {
         private static List<Item> inventory = new List<Item>();
+        private static Dictionary<ItemType, Item> equipDict = new Dictionary<ItemType, Item>();
 
         public static void AddItem(Item item)
         {
@@ -44,8 +45,22 @@ namespace TextRpg
             item.TogleEquipState();
 
             // 장착 해제에 따른 효과 반영
+            if (equipDict.ContainsKey(item._itemType)) // 해당하는 타입이 있다면 장착해제 후 장착
+            {
+                var ChangeItem = equipDict[item._itemType];
+                ChangeItem.TogleEquipState();
+                ActiveItemEffect(ChangeItem);
+                equipDict[item._itemType] = item;
+            }
+            else
+            {
+                equipDict.Add(item._itemType, item);
+            }
+            ActiveItemEffect(item);
+        }
 
-      
+        public static void ActiveItemEffect(Item item)
+        {
             foreach (var value in item.GetEffect())
             {
                 int effectPower = value.Value;
@@ -54,7 +69,6 @@ namespace TextRpg
 
                 GameManager.myPlayer.SetAddtionalStat(value.Key, effectPower);
             }
-    
         }
     }
 }

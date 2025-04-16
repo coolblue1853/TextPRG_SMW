@@ -14,6 +14,9 @@ namespace TextRpg
         Equip = 5,
         Shop = 6,
         Buy = 7,
+        Dungeon = 8,
+        DungeonResult = 9,
+        Restore = 10,
     }
 
     public enum PlayerType
@@ -32,5 +35,12 @@ namespace TextRpg
         None = 0,
         ATK = 1,
         DEF = 2,
+    }
+    public enum Level
+    {
+        LV_1 = 1,
+        LV_2 = 2,
+        LV_3 = 3,
+        LV_4 = 4,
     }
 }

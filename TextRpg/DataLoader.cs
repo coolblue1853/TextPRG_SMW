@@ -10,7 +10,8 @@ namespace TextRpg
     {
         public static string job = "../../../Json/jobs.json";
         public static string item = "../../../Json/items.json";
-        public static string sceneText = "../../../Json/sceneText.json";
+        public static string scene = "../../../Json/sceneText.json";
+        public static string dungeon = "../../../Json/dungeons.json";
         public static T LoadData<T>(string path)
         {
             string json = File.ReadAllText(path);

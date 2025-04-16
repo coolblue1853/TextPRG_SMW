@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace TextRpg
 {
@@ -9,24 +11,30 @@ namespace TextRpg
         public PlayerType _playerType {  get; private set; }
         public string _nickName { get; private set; }
         public string _className { get; private set; }
-        public int _level { get; private set; }
+        public Level _level { get; private set; }
+        public int _exp { get; private set; }
         public Attack _attack { get; private set; }
         public Defense _defense { get; private set; }
         public int _hp { get; private set; }
         public int _gold { get; private set; }
 
+        private float attackUpPoint = 0.5f;
+        private float defenseUpPoint = 1.0f;
+
         private Dictionary<AdditionalStat, Action<int>> _statAdders;
         private Dictionary<AdditionalStat, int> _additionalStat;
+
         protected Player(PlayerType type)
         {
             _playerType = type;
         }
 
-        public virtual void SetInfo(string name, JobData job,int level = 1,int gold = 1500)
+        public virtual void SetInfo(string name, JobData job, Level level = Level.LV_1, int exp = 0, int gold = 1500)
         {
             _nickName = name;
             _className = job.Name;
             _level = level;
+            _exp = exp;
             _attack = new Attack(job.Attack);
             _defense = new Defense(job.Defense);
             _hp = job.MaxHP;
@@ -39,8 +47,8 @@ namespace TextRpg
         {
             _statAdders = new Dictionary<AdditionalStat, Action<int>>()
         {
-            { AdditionalStat.ATK, v => _attack.SetAddValue(v) },
-            { AdditionalStat.DEF, v => _defense.SetAddValue(v) }
+            { AdditionalStat.ATK, v => _attack.SetAddValue(new StatFloat(v)) },
+            { AdditionalStat.DEF, v => _defense.SetAddValue(new StatFloat(v)) }
         };
             _additionalStat = new Dictionary<AdditionalStat, int>();
         }
@@ -70,23 +78,43 @@ namespace TextRpg
             return _additionalStat;
         }
 
-        public void SetGold(int value)
-        {
-            _gold += value;
-        }
-
+      
         public Dictionary<string, string> GetFormattedStats()
         {
             return new Dictionary<string, string>
         {
-            { "level", _level.ToString() },
+            { "level", ((int)_level).ToString() },
             { "nickName", _nickName },
             { "className", _className },
-            { "attack", _attack.GetBaselValue().ToString() },
-            { "defense", _defense.GetBaselValue().ToString() },
+            { "attack", _attack.GetBaseValue().Value.ToString() },
+            { "defense", _defense.GetBaseValue().Value.ToString() },
             { "hp", _hp.ToString() },
-            { "gold", _gold.ToString() }
+            { "gold", _gold.ToString() }    
         };
+        }
+        public void ChangeGold(int value)
+        {
+            _gold += value;
+        }
+
+        public void ChangeHp(int value)
+        {
+            _hp += value;
+        }
+        public void SetHp(int value)
+        {
+            _hp = value;
+        }
+        public void ChangeExp(int value)
+        {
+            _exp += value;
+
+           if ((int)_level < _exp && _level < Level.LV_4)
+            {
+                _level++;
+                _attack.SetBaseValue(_attack._baseValue.Add(new StatFloat(attackUpPoint))) ;
+                _defense.SetBaseValue(_defense._baseValue.Add(new StatFloat(defenseUpPoint))) ;
+            }
         }
     }
 
@@ -96,7 +124,7 @@ namespace TextRpg
         {
         }
 
-        public override void SetInfo(string name, JobData job, int level = 1, int gold = 1500)
+        public override void SetInfo(string name, JobData job, Level level = Level.LV_1, int exp = 0, int gold = 1500)
         {
             base.SetInfo(name, job, level, gold);
         }
