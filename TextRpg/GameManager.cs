@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -11,7 +12,8 @@ namespace TextRpg
         static GameState state = GameState.None;
         static int waitTime = 100; // 대기시간
         static string action;
-        static bool showErrorOnce = false;
+        static bool isShowError = false;
+        static string shopText = "";
         static void Main(string[] args)
         {
             Init();
@@ -59,15 +61,14 @@ namespace TextRpg
 
         static void SetCharacter() 
         {
-            Utils.UpdateStringBuilder(Database.sceneDatas.Intro.welcome, true, true);
+            Utils.UpdateStringBuilder(Database.sceneDatas.Intro.intro_welcome, true, true);
             Utils.ReadLine(out string nickName);
 
-            bool isError = false;
-
+  
             while (true)
             {
-                string input = GetJobInput(isError);
-
+                string input = GetJobInput(isShowError);
+                isShowError = false;
                 if (int.TryParse(input, out int num))   // 예외처리 받아야함 tryCatch 로 잡아보면 좋을듯?
                 {
                     switch (num)
@@ -79,26 +80,25 @@ namespace TextRpg
                             return;
                         // TODO: 다른 직업도 추가
                         default:
-                            isError = true;
+                            isShowError = true;
                             break;
                     }
                 }
                 else
-                    isError = true;
+                    isShowError = true;
             }
         }
-
-
         static string GetJobInput(bool showError)
         {
-
             if (showError)
             {
-                Utils.UpdateStringBuilder(Database.sceneDatas.Intro.choose_job, false, true);
+                Utils.UpdateStringBuilder(Database.sceneDatas.Intro.choose_job,false, true);
                 Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, true);
             }
             else
+            {
                 Utils.UpdateStringBuilder(Database.sceneDatas.Intro.choose_job, true, true);
+            }
 
             Utils.ReadLine(out string input);
             return input;
@@ -106,13 +106,15 @@ namespace TextRpg
 
         static void Town()
         {
-            Utils.ClearStringBuilder();
-            Utils.UpdateStringBuilder("스파르타 마을에 오신 여러분 환영합니다\n");
-            Utils.UpdateStringBuilder("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다\n");
-            Utils.UpdateStringBuilder("1. 상태보기\n2. 인벤토리\n3. 상점\n");
-            Utils.UpdateStringBuilder("원하시는 행동을 입력해 주세요\n>>");
-            Utils.ShowStringBuilder();
-            action = Console.ReadLine();
+            Utils.UpdateStringBuilder(Database.sceneDatas.Town.town_welcome);
+            Utils.UpdateStringBuilder(Database.sceneDatas.Town.town_select, !isShowError, true);
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+            }
+            isShowError = false;
+
+            Utils.ReadLine(out string action);
             if (int.TryParse(action, out int num)) // 예외처리
             {
                 Utils.ClearStringBuilder();
@@ -128,33 +130,31 @@ namespace TextRpg
                         ChangeState(GameState.Shop);
                         break;
                     default:
-                        Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                        isShowError = true;
                         break;
                 }
             }
             else
-            {
-                Utils.ClearStringBuilder();
-                Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
-            }
+                isShowError = true;
         }
 
         static void CheckStat()
         {
-
-            Utils.UpdateStringBuilder("당신에 대한 정보 입니다.\n");
-            Utils.UpdateStringBuilder($"Lv. {myPlayer._level}\n");
-            Utils.UpdateStringBuilder($"{myPlayer._nickName} ( {myPlayer._className} )\n");
-            Utils.UpdateStringBuilder($"공격력 : {myPlayer._attack}");
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Stat.level_name, myPlayer.GetFormattedStats()),false,true);
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Stat.attack, myPlayer.GetFormattedStats()));
             CheckAdditionalStat(AdditionalStat.ATK);
-            Utils.UpdateStringBuilder($"방어력 : {myPlayer._defense}");
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Stat.defense, myPlayer.GetFormattedStats()));
             CheckAdditionalStat(AdditionalStat.DEF);
-            Utils.UpdateStringBuilder($"체  력 : {myPlayer._hp}\n");
-            Utils.UpdateStringBuilder($"Gold : {myPlayer._gold}\n\n");
-            Utils.UpdateStringBuilder("0. 나가기\n");
-            Utils.ShowStringBuilder();
-            action = Console.ReadLine();
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Stat.etc, myPlayer.GetFormattedStats()),!isShowError);
 
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+            }
+
+            isShowError = false;
+
+            Utils.ReadLine(out string action);
             if (int.TryParse(action, out int num)) // 예외처리
             {
                 Utils.ClearStringBuilder();
@@ -164,25 +164,24 @@ namespace TextRpg
                         ChangeState(GameState.Town);
                         break;
                     default:
-                        Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                        isShowError = true;
                         break;
                 }
             }
             else
             {
-                Utils.ClearStringBuilder();
-                Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                isShowError = true;
             }
         }
 
         static void CheckAdditionalStat(AdditionalStat additionalStat)
         {
-            if (myPlayer.GetAdditionalStat().TryGetValue(additionalStat.ToString(), out int value))
+            if (myPlayer.GetAdditionalStat().TryGetValue(additionalStat, out int value))
             {
-                if(value > 0)
+                if (value > 0)
                     Utils.UpdateStringBuilder($" (+ {value})\n");
                 else
-                    Utils.UpdateStringBuilder($" (- {value})\n");
+                    Utils.UpdateStringBuilder($" (- {Math.Abs(value)})\n");
             }
             else
                 Utils.UpdateStringBuilder($"\n");
@@ -190,23 +189,23 @@ namespace TextRpg
 
         static void ShowInventory(bool isEqiup = false)
         {
+            Utils.UpdateStringBuilder(Database.sceneDatas.Inventory.benner,false,true);
+            Inventory.AddInventoryStringBuiler(isEqiup);
 
-            Utils.UpdateStringBuilder("[아이템 목록]\n");
-            if(isEqiup == false)
+            if (!isEqiup)
             {
-                Inventory.AddInventoryStringBuiler();
-                Utils.UpdateStringBuilder("\n1. 장착 관리\n");
-                Utils.UpdateStringBuilder("0. 나가기\n\n");
+                Utils.UpdateStringBuilder(Database.sceneDatas.Inventory.equip_mode);
             }
-            else
+  
+            Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc,!isShowError);
+
+            if (isShowError)
             {
-                Inventory.AddInventoryStringBuiler(true);
-                Utils.UpdateStringBuilder("0. 나가기\n\n");
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
             }
 
-            Utils.UpdateStringBuilder("원하시는 행동을 입력해 주세요\n>>");
-            Utils.ShowStringBuilder();
-            action = Console.ReadLine();
+            Utils.ReadLine(out string action);
             if (int.TryParse(action, out int num)) // 예외처리
             {
                 Utils.ClearStringBuilder();
@@ -221,13 +220,12 @@ namespace TextRpg
                             ChangeState(GameState.Equip);
                             break;
                         default:
-                            Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                            isShowError = true;
                             break;
                     }
                 }
                 else
                 {
-
                     if (num == 0)
                     {
                         ChangeState(GameState.Inventory);
@@ -237,38 +235,45 @@ namespace TextRpg
                         Inventory.EquipItem(num);
                     }
                     else
-                        Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                    {
+                        isShowError = true;
+                    }
+      
                 }
             }
             else
             {
-                Utils.ClearStringBuilder();
-                Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                isShowError = true;
             }
-
         }
 
         public static void ShowShop(bool isBuy = false)
         {
-            Utils.UpdateStringBuilder("[보유 골드]\n");
-            Utils.UpdateStringBuilder($"{myPlayer._gold}\n\n");
-            Utils.UpdateStringBuilder("[아이탬 목록]\n");
-
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Shop.benner, myPlayer.GetFormattedStats()), false, true);
+            Shop.AddShopStringBuiler(isBuy);
             if (isBuy == false)
             {
-                Shop.AddShopStringBuiler();
-                Utils.UpdateStringBuilder("\n1. 아이템 구매\n");
-                Utils.UpdateStringBuilder("0. 나가기\n\n");
+                Utils.UpdateStringBuilder(Database.sceneDatas.Shop.buy);
+            }
+
+            if (shopText != "")
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc);
+                Utils.UpdateStringBuilder(shopText, true, false);
+                shopText = "";
             }
             else
             {
-                Shop.AddShopStringBuiler(true);
-                Utils.UpdateStringBuilder("0. 나가기\n\n");
+                Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, !isShowError);
             }
- 
-            Utils.UpdateStringBuilder("원하시는 행동을 입력해 주세요\n>>");
-            Utils.ShowStringBuilder();
-            action = Console.ReadLine();
+        
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+            
+            Utils.ReadLine(out string action);
             if (int.TryParse(action, out int num)) // 예외처리
             {
                 Utils.ClearStringBuilder();
@@ -284,25 +289,29 @@ namespace TextRpg
                             ChangeState(GameState.Buy);
                             break;
                         default:
-                            Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                            isShowError = true;
                             break;
                     }
                 }
                 else
                 {
                     if (num == 0)
+                    {
                         ChangeState(GameState.Shop);
+                    }
                     else if (num <= Shop.GetShopSize())
-                        Shop.BuyItem(num);
+                    {
+                        shopText = Shop.BuyItem(num);
+                    }
                     else
-                        Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                    {
+                        isShowError = true;
+                    }
                 }
-   
             }
             else
             {
-                Utils.ClearStringBuilder();
-                Utils.UpdateStringBuilder("! 잘못된 입력입니다 !\n");
+                isShowError = true;
             }
         }
 

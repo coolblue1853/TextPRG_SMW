@@ -41,7 +41,7 @@ namespace TextRpg
             Utils.UpdateStringBuilder("\n\n");
         }
 
-        public static void BuyItem(int index)
+        public static string BuyItem(int index)
         {
             Item item = shopItems.ElementAt(index - 1).Key;
             // 안 산 물건이라면
@@ -52,13 +52,13 @@ namespace TextRpg
                     shopItems[item] = true;
                     Inventory.AddItem(item);
                     GameManager.myPlayer.SetGold(-item._price);
-                    Utils.UpdateStringBuilder("구매를 완료했습니다.\n");
+                    return Database.sceneDatas.Shop.buy_Succ;
                 }
                 else
-                    Utils.UpdateStringBuilder("Gold가 부족합니다.\n");
+                    return Database.sceneDatas.Shop.buy_fail;
             }
             else
-                Utils.UpdateStringBuilder("이미 구매한 아이템 입니다.\n");
+                return Database.sceneDatas.Shop.buy_already;
         }
     }
 }

@@ -16,5 +16,14 @@ namespace TextRpg
             string json = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<T>(json);
         }
+    
+        public static string FormatText(string template, Dictionary<string, string> dict)
+        {
+            foreach (var pair in dict)
+            {
+                template = template.Replace("{" + pair.Key + "}", pair.Value);
+            }
+            return template;
+        }
     }
 }

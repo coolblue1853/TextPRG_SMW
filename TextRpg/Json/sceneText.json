@@ -1,7 +1,32 @@
 {
   "Intro": {
-    "welcome": "스파르타 던전에 오신 여러분 환영합니다\n원하시는 닉네임을 설정해 주세요\n>>",
+    "intro_welcome": "스파르타 던전에 오신 여러분 환영합니다\n원하시는 닉네임을 설정해 주세요\n>>",
     "choose_job": "원하시는 직업을 설정해 주세요 :\n1. 전사  2. 마법사  3. 도적\n>>"
+  },
+  "Town": {
+    "town_welcome": "스파르타 마을에 오신 여러분 환영합니다\n이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다\n>>",
+    "town_select": "1. 상태보기\n2. 인벤토리\n3. 상점\n원하시는 행동을 입력해 주세요\n>>"
+  },
+  "Stat": {
+    "level_name": "당신에 대한 정보 입니다.\nLv. {level}\n{nickName} ( {className} )\n",
+    "attack": "공격력 : {attack}",
+    "defense": "방어력 : {defense}",
+    "etc": "체  력 : {hp}\nGold : {gold}\n\n0. 나가기\n"
+  },
+  "Inventory": {
+    "benner": "[아이템 목록]\n",
+    "equip_mode": "\n1. 장착 관리\n"
+  },
+  "Shop": {
+    "benner": "[보유 골드]\n{gold}G\n\n[아이탬 목록]\n",
+    "buy": "\n1. 아이템 구매\n",
+    "buy_fail": "Gold가 부족합니다.\n",
+    "buy_Succ": "구매를 완료했습니다.\n",
+    "buy_already": "이미 구매한 아이템 입니다.\n"
+  },
+  "ETC": {
+    "base_etc": "0. 나가기\n\n하시는 행동을 입력해 주세요\n>>"
+
   },
   "Error": {
     "input_error": "! 잘못된 입력입니다 !\n"

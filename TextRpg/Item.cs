@@ -15,7 +15,7 @@ namespace TextRpg
         public int _price { get; private set; }
         public bool _isEquip { get; private set; }
 
-        protected Dictionary<string, int> _effectsDict = new Dictionary<string, int>();
+        protected Dictionary<AdditionalStat, int> _effectsDict = new Dictionary<AdditionalStat, int>();
 
         protected Item() { }
 
@@ -28,7 +28,10 @@ namespace TextRpg
             foreach (var value in effectsData)
             {
                 var effect = value.Split(':');
-                _effectsDict.Add(effect[0], int.Parse(effect[1]));
+                if (Enum.TryParse(effect[0], out AdditionalStat statKey))
+                    _effectsDict.Add(statKey, int.Parse(effect[1]));
+                else
+                    Console.WriteLine($"알 수 없는 스탯 키: {effect[0]}");
             }
             _description = item.Description;
             _price = item.Price;
@@ -51,7 +54,7 @@ namespace TextRpg
             // 위의 케이스가 아니면 null 반환
             return null;
         }
-        public Dictionary<string, int> GetEffect()
+        public Dictionary<AdditionalStat, int> GetEffect()
         {
             return _effectsDict;
         }
@@ -63,8 +66,6 @@ namespace TextRpg
 
     class Weapon : Item
     {
-        protected int attack;
-
         public Weapon(ItemData data)
         {
             SetInfo(data);
@@ -73,14 +74,11 @@ namespace TextRpg
         protected override void SetInfo(ItemData item)
         {
             base.SetInfo(item);
-            attack = _effectsDict["ATK"];
         }
     }
 
     class Armor : Item
     {
-        protected int defence;
-
         public Armor(ItemData data)
         {
             SetInfo(data);
@@ -89,7 +87,6 @@ namespace TextRpg
         protected override void SetInfo(ItemData item)
         {
             base.SetInfo(item);
-            defence = _effectsDict["DEF"];
         }
     }
 }

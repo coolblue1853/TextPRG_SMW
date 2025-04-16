@@ -48,10 +48,11 @@ namespace TextRpg
       
             foreach (var value in item.GetEffect())
             {
-                if (item._isEquip) // 효과 추가
-                    GameManager.myPlayer.AddAddtionalStat(value.Key, value.Value);
-                else // 효과 감소
-                    GameManager.myPlayer.DeleteAddtionalStat(value.Key, value.Value);
+                int effectPower = value.Value;
+                if (!item._isEquip) // 효과 추가
+                    effectPower = -effectPower;
+
+                GameManager.myPlayer.SetAddtionalStat(value.Key, effectPower);
             }
     
         }

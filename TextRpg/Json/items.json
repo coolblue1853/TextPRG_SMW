@@ -33,6 +33,22 @@
   },
   {
     "Id": 4,
+    "Type": "Armor",
+    "Name": "헤르메스의 신발",
+    "Effect": "DEF:+5,ATK:+5",
+    "Description": "달개달린 기묘한 신발 입니다.",
+    "Price": 2500
+  },
+  {
+    "Id": 5,
+    "Type": "Armor",
+    "Name": "바이킹의 방패",
+    "Effect": "DEF:+10,ATK:+10",
+    "Description": "고대 바이킹이 사용했다는 방패입니다",
+    "Price": 2500
+  },
+  {
+    "Id": 6,
     "Type": "Weapon",
     "Name": "낡은검",
     "Effect": "ATK:+2",
@@ -40,7 +56,7 @@
     "Price": 600
   },
   {
-    "Id": 5,
+    "Id": 7,
     "Type": "Weapon",
     "Name": "청동 도끼",
     "Effect": "ATK:+5",
@@ -48,11 +64,27 @@
     "Price": 1500
   },
   {
-    "Id": 6,
+    "Id": 8,
     "Type": "Weapon",
     "Name": "스파르타의 창",
     "Effect": "ATK:+7",
     "Description": "스파르타의 전사들이 사용했다는 전설의 창입니다",
     "Price": 2500
+  },
+  {
+    "Id": 9,
+    "Type": "Weapon",
+    "Name": "돌에 박힌 검",
+    "Effect": "ATK:+12",
+    "Description": "검 끝에 떼어내지지 않는 돌이 박혀진 검 입니다.",
+    "Price": 3000
+  },
+  {
+    "Id": 10,
+    "Type": "Weapon",
+    "Name": "저주 받은 도끼",
+    "Effect": "ATK:+15,DEF:-5",
+    "Description": "이 저주받은 도끼는 사용자에게도 상처를 주는 듯 합니다.",
+    "Price": 3000
   }
 ]
