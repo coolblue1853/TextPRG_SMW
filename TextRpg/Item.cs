@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace TextRpg
 {
-    class Item
+    public class Item
     {
         public ItemType _itemType { get; private set; }
         public int _id { get; private set; }

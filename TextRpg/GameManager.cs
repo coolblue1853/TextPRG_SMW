@@ -51,6 +51,9 @@ namespace TextRpg
                     case GameState.Buy:
                         ShowShop(true);
                         break;
+                    case GameState.Sell:
+                        SellItem();
+                        break;
                     case GameState.Dungeon:
                         GoDungeon();
                         break;
@@ -117,7 +120,6 @@ namespace TextRpg
             Utils.ReadLine(out string input);
             return input;
         }
-
         static void Town()
         {
             Utils.UpdateStringBuilder(Database.sceneDatas.Town.town_welcome);
@@ -157,7 +159,6 @@ namespace TextRpg
             else
                 isShowError = true;
         }
-
         static void CheckStat()
         {
             Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Stat.level_name, myPlayer.GetFormattedStats()),false,true);
@@ -305,6 +306,9 @@ namespace TextRpg
                         case 1:
                             ChangeState(GameState.Buy);
                             break;
+                        case 2:
+                            ChangeState(GameState.Sell);
+                            break;
                         default:
                             isShowError = true;
                             break;
@@ -331,6 +335,41 @@ namespace TextRpg
                 isShowError = true;
             }
         }
+        public static void SellItem()
+        {
+            Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Shop.banner, myPlayer.GetFormattedStats()), false, true);
+            Inventory.AddInventoryStringBuiler(true);
+            Utils.UpdateStringBuilder(Database.sceneDatas.ETC.base_etc, !isShowError);
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+
+                if (num == 0)
+                {
+                    ChangeState(GameState.Shop);
+                }
+                else if (num <= Inventory.GetInventorySize())
+                {
+                    Shop.SellItem(Inventory.GetItem(num));
+                }
+                else
+                {
+                    isShowError = true;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+
         public static void GoDungeon()
         {
 
@@ -419,7 +458,6 @@ namespace TextRpg
                 isShowError = true;
             }
         }
-
         static void GoRestore()
         {
             Utils.UpdateStringBuilder(DataLoader.FormatText(Database.sceneDatas.Restore.banner, myPlayer.GetFormattedStats()), false, true);
@@ -465,7 +503,6 @@ namespace TextRpg
                 isShowError = true;
             }
         }
-
        static bool TryToRestore()
         {
             int nowGold = myPlayer._gold;

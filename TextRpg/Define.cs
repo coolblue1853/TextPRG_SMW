@@ -14,9 +14,10 @@ namespace TextRpg
         Equip = 5,
         Shop = 6,
         Buy = 7,
-        Dungeon = 8,
-        DungeonResult = 9,
-        Restore = 10,
+        Sell = 8,
+        Dungeon = 9,
+        DungeonResult = 10,
+        Restore = 11,
     }
 
     public enum PlayerType

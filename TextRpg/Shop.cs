@@ -60,5 +60,13 @@ namespace TextRpg
             else
                 return Database.sceneDatas.Shop.buy_already;
         }
+
+        public static void SellItem(Item item)
+        {
+            shopItems[item] = false;
+            int sellPrice = (int)(item._price * 0.85f);
+            GameManager.myPlayer.ChangeGold(sellPrice);
+            Inventory.DeleteItem(item);
+        }
     }
 }
