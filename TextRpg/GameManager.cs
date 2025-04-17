@@ -22,6 +22,7 @@ namespace TextRpg
         public Shop shop = new Shop();
         public Inventory inventory = new Inventory();
         public Database database = new Database();
+        public SaveManager saveManager = new SaveManager();
 
         //던전관련 변수
         public DungeonResultData dungeonResultData { get; set; } = new DungeonResultData();
