@@ -8,7 +8,6 @@ namespace TextRpg
 {
      class Database
     {
-        public static Database Instance { get; private set; } = new Database();
         DataLoader dataLoader;
         //DB
         public  List<JobData> jobs; // 직업 관련 
