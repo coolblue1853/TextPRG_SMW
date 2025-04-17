@@ -6,7 +6,6 @@ using System.Text;
 
 namespace TextRpg
 {
-
     class TownStateHandler : IGameStateHandler
     {
         bool isShowError = false;

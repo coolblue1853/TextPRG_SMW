@@ -24,7 +24,7 @@ namespace TextRpg
 
         public StatInt Add(StatInt other)
         {
-            return new StatInt(this.Value + other.Value);
+            return new StatInt(Value + other.Value);
         }
     }
     public class StatFloat : IAddable<StatFloat>
@@ -42,7 +42,7 @@ namespace TextRpg
 
         public StatFloat Add(StatFloat other)
         {
-            return new StatFloat(this.Value + other.Value);
+            return new StatFloat(Value + other.Value);
         }
     }
 
@@ -55,7 +55,7 @@ namespace TextRpg
         public Stat(T value)
         {
             _baseValue = value;
-            _addValue = new T(); 
+            _addValue = new T();
         }
 
         // 최종 값을 구하는 프로퍼티
@@ -80,7 +80,7 @@ namespace TextRpg
 
     }
 
-    public  class Defense : Stat<StatFloat>
+    public class Defense : Stat<StatFloat>
     {
         public Defense(float value) : base(new StatFloat(value))  // StatFloat로 값 래핑
         {

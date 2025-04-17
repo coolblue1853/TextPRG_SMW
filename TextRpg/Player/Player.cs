@@ -10,7 +10,7 @@ namespace TextRpg
 {
     public class Player
     {
-        public PlayerType _playerType {  get; private set; }
+        public PlayerType _playerType { get; private set; }
         public string _nickName { get; private set; }
         public string _className { get; private set; }
         public Level _level { get; private set; }
@@ -78,7 +78,7 @@ namespace TextRpg
             if (_statAdders.TryGetValue(key, out var action))
             {
                 action(value);
-                
+
                 if (_additionalStat.ContainsKey(key))
                 {
                     _additionalStat[key] += value;
@@ -86,7 +86,7 @@ namespace TextRpg
                     if (_additionalStat[key] == 0)
                         _additionalStat.Remove(key);
                 }
-                else 
+                else
                     _additionalStat.Add(key, value);
             }
             else
@@ -98,7 +98,7 @@ namespace TextRpg
             return _additionalStat;
         }
 
-      
+
         public Dictionary<string, string> GetFormattedStats()
         {
             return new Dictionary<string, string>
@@ -109,7 +109,7 @@ namespace TextRpg
             { "attack", _attack.GetBaseValue().Value.ToString() },
             { "defense", _defense.GetBaseValue().Value.ToString() },
             { "hp", _hp.ToString() },
-            { "gold", _gold.ToString() }    
+            { "gold", _gold.ToString() }
         };
         }
         public void ChangeGold(int value)
@@ -130,11 +130,11 @@ namespace TextRpg
         {
             _exp += value;
 
-           if ((int)_level < _exp && _level < Level.LV_4)
+            if ((int)_level < _exp && _level < Level.LV_4)
             {
                 _level++;
-                _attack.SetBaseValue(_attack._baseValue.Add(new StatFloat(attackUpPoint))) ;
-                _defense.SetBaseValue(_defense._baseValue.Add(new StatFloat(defenseUpPoint))) ;
+                _attack.SetBaseValue(_attack._baseValue.Add(new StatFloat(attackUpPoint)));
+                _defense.SetBaseValue(_defense._baseValue.Add(new StatFloat(defenseUpPoint)));
             }
         }
     }

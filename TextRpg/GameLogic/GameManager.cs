@@ -105,7 +105,6 @@ namespace TextRpg
         {
             state = changeState;
         }
-        
     }
 
     internal class GameManager
