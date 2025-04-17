@@ -5,68 +5,227 @@ using System.Text;
 
 namespace TextRpg
 {
+    class SellShopHandler : IGameStateHandler
+    {
+        bool isShowError = false;
+        string shopText = "";
+        public void Handle(GameLoop context)
+        {
+            DataLoader dataLoader = new DataLoader();
+            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
+            Inventory.Instance.AddInventoryStringBuiler(true);
+            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+
+                if (num == 0)
+                {
+                    context.ChangeState(GameState.Shop);
+                }
+                else if (num <= Inventory.Instance.GetInventorySize())
+                {
+                    Shop.Instance.SellItem(num);
+                }
+                else
+                {
+                    isShowError = true;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+    }
+    class BuyShopHandler : IGameStateHandler
+    {
+        bool isShowError = false;
+        string shopText = "";
+        public void Handle(GameLoop context)
+        {
+            DataLoader dataLoader = new DataLoader();
+            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
+            Shop.Instance.AddShopStringBuiler(true);
+
+            if (shopText != "")
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc);
+                Utils.UpdateStringBuilder(shopText, true, false);
+                shopText = "";
+            }
+            else
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            }
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+                if (num == 0)
+                {
+                    context.ChangeState(GameState.Shop);
+                }
+                else if (num <= Shop.Instance.GetShopSize())
+                {
+                    shopText = Shop.Instance.BuyItem(num);
+                }
+                else
+                {
+                    isShowError = true;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+    }
+
+    class ShowShopHandler : IGameStateHandler
+    {
+        bool isShowError = false;
+        string shopText = "";
+        public void Handle(GameLoop context)
+        {
+            DataLoader dataLoader = new DataLoader();
+            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner, context.myPlayer.GetFormattedStats()), false, true);
+            Shop.Instance.AddShopStringBuiler(false);
+            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Shop.buy);
+
+            if (shopText != "")
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc);
+                Utils.UpdateStringBuilder(shopText, true, false);
+                shopText = "";
+            }
+            else
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            }
+
+            if (isShowError)
+            {
+                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                isShowError = false;
+            }
+
+            Utils.ReadLine(out string action);
+            if (int.TryParse(action, out int num)) // 예외처리
+            {
+                switch (num)
+                {
+                    case 0:
+                      context.ChangeState(GameState.Town);
+                        break;
+                    case 1:
+                        context.ChangeState(GameState.Buy);
+                        break;
+                    case 2:
+                        context.ChangeState(GameState.Sell);
+                        break;
+                    default:
+                        isShowError = true;
+                        break;
+                }
+            }
+            else
+            {
+                isShowError = true;
+            }
+        }
+  
+    }
     public class Shop
     {
-        static Dictionary<Item, bool> shopItems = new Dictionary<Item, bool>();
+        public static Shop Instance { get; private set; } = new Shop();
+        Dictionary<int, (Item, bool)> shopItems = new Dictionary<int, (Item, bool)>();
 
-        public static void Init()
+        public void Init() // static을 제거
         {
-            foreach (var value in Database.items)
-                shopItems.Add(value, false);
+            foreach (var value in Database.Instance.items)
+                shopItems.Add(value._id, (value, false));
         }
-        public static int GetShopSize()
+        public  int GetShopSize()
         {
             return shopItems.Count;
         }
-        public static void AddShopStringBuiler(bool isShowNum = false)
+        public  void AddShopStringBuiler(bool isShowNum = false)
         {
             for (int i = 1; i < shopItems.Count+1; i++)
             {
-                Item item = shopItems.ElementAt(i-1).Key;
-                bool isBuy = shopItems.ElementAt(i-1).Value;
+                Item item = shopItems.ElementAt(i-1).Value.Item1;
+                bool isBuy = shopItems.ElementAt(i-1).Value.Item2;
 
+
+                string equipText = "";
 
                 if (isShowNum)
-                    Utils.UpdateStringBuilder($"- {i} ");
+                    equipText = ($"- {i} ");
                 else
-                    Utils.UpdateStringBuilder("- ");
+                    equipText = ($"- ");
 
-                Utils.UpdateStringBuilder($"{item._name} | {Utils.AddEffectText(item)} | {item._description} | ");
+                string name = Utils.PadRight(equipText + item._name, 25);
+                string effect = Utils.PadRight(Utils.AddEffectText(item), 20);
+                string desc = Utils.PadRight(item._description, 55);
+                string price = Utils.PadRight(((int)(item._price)).ToString(), 6);
+
+                Utils.UpdateStringBuilder($"{name} | {effect} | {desc} | ");
+
+
                 if(isBuy)
                     Utils.UpdateStringBuilder("[구매완료]\n");
                 else
-                    Utils.UpdateStringBuilder($"{item._price}G\n");
+                    Utils.UpdateStringBuilder($"{price}G\n");
 
             }
             Utils.UpdateStringBuilder("\n\n");
         }
 
-        public static string BuyItem(int index)
+        public string BuyItem(int index)
         {
-            Item item = shopItems.ElementAt(index - 1).Key;
+            Item item = shopItems.ElementAt(index - 1).Value.Item1;
             // 안 산 물건이라면
-            if (shopItems[item] == false)
+            if (shopItems[item._id].Item2 == false)
             {
-                if(GameManager.myPlayer._gold >= item._price)
+                if(GameManager.gameLoop.myPlayer._gold >= item._price)
                 {
-                    shopItems[item] = true;
-                    Inventory.AddItem(item);
-                    GameManager.myPlayer.ChangeGold(-item._price);
-                    return Database.sceneDatas.Shop.buy_Succ;
+                    shopItems[item._id] = (item,true);
+                    Inventory.Instance.AddItem(item);
+                    GameManager.gameLoop.myPlayer.ChangeGold(-item._price);
+                    return Database.Instance.sceneDatas.Shop.buy_Succ;
                 }
                 else
-                    return Database.sceneDatas.Shop.buy_fail;
+                    return Database.Instance.sceneDatas.Shop.buy_fail;
             }
             else
-                return Database.sceneDatas.Shop.buy_already;
+                return Database.Instance.sceneDatas.Shop.buy_already;
         }
 
-        public static void SellItem(Item item)
+        public  void SellItem(int num)
         {
-            shopItems[item] = false;
-            int sellPrice = (int)(item._price * 0.85f);
-            GameManager.myPlayer.ChangeGold(sellPrice);
-            Inventory.DeleteItem(item);
+            Item sellItem = Inventory.Instance.GetItem(num);
+            shopItems[sellItem._id] = (sellItem, false);
+            int sellPrice = (int)(sellItem._price * 0.85f);
+            GameManager.gameLoop.myPlayer.ChangeGold(sellPrice);
+            Inventory.Instance.DeleteItem(sellItem, num);
+        }
+        public  void SetItemBuy(int idx)
+        {
+            shopItems[idx] = (shopItems[idx].Item1, true);
         }
     }
 }

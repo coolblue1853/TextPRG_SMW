@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Xml.Serialization;
 
 namespace TextRpg
 {
-    class Player
+    public class Player
     {
         public PlayerType _playerType {  get; private set; }
         public string _nickName { get; private set; }
@@ -23,10 +25,28 @@ namespace TextRpg
 
         private Dictionary<AdditionalStat, Action<int>> _statAdders;
         private Dictionary<AdditionalStat, int> _additionalStat;
-
+        public Player()
+        {
+        }
         protected Player(PlayerType type)
         {
             _playerType = type;
+        }
+        protected Player(PlayerSaveData data)
+        {
+            _playerType = (PlayerType)data.PlayerType;
+            _nickName = data.NickName;
+            _className = data.ClassName;
+            _level = (Level)data.Level;
+            _exp = data.Exp;
+            _attack = new Attack(data.AttackBase);
+            _attack.SetAddValue(new StatFloat(data.AttackAdd));
+            _defense = new Defense(data.DefenseBase);
+            _defense.SetAddValue(new StatFloat(data.DefenseAdd));
+            _hp = data.HP;
+            _gold = data.Gold;
+
+            InitStatDelegates();
         }
 
         public virtual void SetInfo(string name, JobData job, Level level = Level.LV_1, int exp = 0, int gold = 1500)
@@ -101,6 +121,7 @@ namespace TextRpg
         {
             _hp += value;
         }
+
         public void SetHp(int value)
         {
             _hp = value;
@@ -124,10 +145,17 @@ namespace TextRpg
         {
         }
 
+        public Warrior(PlayerSaveData data) : base(data)
+        {
+
+        }
+
+
         public override void SetInfo(string name, JobData job, Level level = Level.LV_1, int exp = 0, int gold = 1500)
         {
             base.SetInfo(name, job, level, gold);
         }
-
     }
+
+
 }

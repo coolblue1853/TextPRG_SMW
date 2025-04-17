@@ -5,11 +5,11 @@ using System.Numerics;
 
 namespace TextRpg
 {
-    interface IAddable<T>
+    public interface IAddable<T>
     {
         T Add(T other);
     }
-    class StatInt : IAddable<StatInt>
+    public class StatInt : IAddable<StatInt>
     {
         public int Value { get; }
 
@@ -27,7 +27,7 @@ namespace TextRpg
             return new StatInt(this.Value + other.Value);
         }
     }
-    class StatFloat : IAddable<StatFloat>
+    public class StatFloat : IAddable<StatFloat>
     {
         public float Value { get; }
 
@@ -46,7 +46,7 @@ namespace TextRpg
         }
     }
 
-    abstract class Stat<T> where T : IAddable<T>, new()
+    public abstract class Stat<T> where T : IAddable<T>, new()
     {
         public T _baseValue { get; protected set; }
         public T _addValue { get; protected set; }
@@ -80,16 +80,16 @@ namespace TextRpg
 
     }
 
-    class Defense : Stat<StatFloat>
+    public  class Defense : Stat<StatFloat>
     {
-        public Defense(int value) : base(new StatFloat(value))  // StatFloat로 값 래핑
+        public Defense(float value) : base(new StatFloat(value))  // StatFloat로 값 래핑
         {
         }
     }
 
-    class Attack : Stat<StatFloat>
+    public class Attack : Stat<StatFloat>
     {
-        public Attack(int value) : base(new StatFloat(value))  // StatFloat로 값 래핑
+        public Attack(float value) : base(new StatFloat(value))  // StatFloat로 값 래핑
         {
         }
     }

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace TextRpg
 {
-    internal class Utils
+    public static class Utils
     {
         static StringBuilder sb = new StringBuilder();
         public static int GetEnumIndex(Enum inputEnum)
@@ -45,6 +44,34 @@ namespace TextRpg
                     effectSB.Append($"{value.Key} {value.Value} ");
             }
             return effectSB.ToString();
+        }
+
+        // 패딩 관련 함수
+        public static string PadRight(this string input, int totalWidth)
+        {
+            int len = GetKoreanAwareLength(input);
+            return input + new string(' ', Math.Max(0, totalWidth - len));
+        }
+
+        public static string PadLeft(this string input, int totalWidth)
+        {
+            int len = GetKoreanAwareLength(input);
+            return new string(' ', Math.Max(0, totalWidth - len)) + input;
+        }
+
+        private static int GetKoreanAwareLength(string input)
+        {
+            int len = 0;
+            foreach (char c in input)
+            {
+                len += IsKorean(c) ? 2 : 1;
+            }
+            return len;
+        }
+
+        private static bool IsKorean(char c)
+        {
+            return (c >= 0xAC00 && c <= 0xD7A3);
         }
     }
 }
