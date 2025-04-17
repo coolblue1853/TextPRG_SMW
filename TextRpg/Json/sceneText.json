@@ -1,0 +1,46 @@
+{
+  "Intro": {
+    "intro_welcome": "스파르타 던전에 오신 여러분 환영합니다\n원하시는 닉네임을 설정해 주세요\n>>",
+    "choose_job": "원하시는 직업을 설정해 주세요 :\n1. 전사  2. 마법사  3. 도적\n>>"
+  },
+  "Town": {
+    "town_welcome": "스파르타 마을에 오신 여러분 환영합니다\n이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다\n>>",
+    "town_select": "1. 상태보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기\n원하시는 행동을 입력해 주세요\n>>"
+  },
+  "Stat": {
+    "level_name": "당신에 대한 정보 입니다.\nLv. {level}\n{nickName} ( {className} )\n",
+    "attack": "공격력 : {attack}",
+    "defense": "방어력 : {defense}",
+    "etc": "체  력 : {hp}\nGold : {gold}\n\n0. 나가기\n"
+  },
+  "Inventory": {
+    "banner": "[아이템 목록]\n",
+    "equip_mode": "\n1. 장착 관리\n"
+  },
+  "Shop": {
+    "banner": "[보유 골드]\n{gold}G\n\n[아이탬 목록]\n",
+    "buy": "\n1. 아이템 구매\n2. 아이템 판매\n",
+    "buy_fail": "Gold가 부족합니다.\n",
+    "buy_Succ": "구매를 완료했습니다.\n",
+    "buy_already": "이미 구매한 아이템 입니다.\n"
+
+  },
+  "ETC": {
+    "base_etc": "0. 나가기\n\n원하시는 행동을 입력해 주세요\n>>"
+
+  },
+  "Dungeon": {
+    "banner": "{idx}. {name} | 방어력 {defense} 이상 권장\n",
+    "reuslt_succ": "던전 클리어\n축하합니다!!\n{name}을 클리어 하였습니다.\n\n[탐험결과]\n체력 {beforHp} -> {afterHp}\nGold {beforeGold} G -> {afterGold} G\n",
+    "reuslt_fail": "던전 실패\n이런!!\n{name}을 클리어 하지 못했습니다.\n\n[탐험결과]\n체력 {beforHp} -> {afterHp}\n"
+  },
+  "Restore": {
+    "banner": "휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {gold} G)\n1. 휴식하기\n",
+    "succ": "휴식을 완료했습니다.",
+    "fail": "Gold 가 부족합니다."
+  },
+  "Error": {
+    "input_error": "! 잘못된 입력입니다 !\n"
+
+  }
+}

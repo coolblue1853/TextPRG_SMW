@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "aqn1SMN+jyw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Coolblue\\Documents\\GitHub\\TextPRG_SMW\\TextRpg\\TextRpg.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Coolblue\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
