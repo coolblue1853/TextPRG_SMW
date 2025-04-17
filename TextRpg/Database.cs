@@ -48,7 +48,7 @@ namespace TextRpg
                 if (item != null)
                     items.Add(item);
             }
-            Shop.Instance.Init();
+            GameManager.gameLoop.shop.Init();
         }
     }
 }

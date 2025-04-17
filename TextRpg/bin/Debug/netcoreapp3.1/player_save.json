@@ -2,12 +2,12 @@
   "PlayerType": 1,
   "NickName": "\uC57C\uC790\uAC70\uBD81",
   "ClassName": "\uC804\uC0AC",
-  "Level": 4,
-  "Exp": 1505,
-  "AttackBase": 11.5,
-  "AttackAdd": 10,
-  "DefenseBase": 8,
-  "DefenseAdd": 15,
+  "Level": 2,
+  "Exp": 1501,
+  "AttackBase": 10.5,
+  "AttackAdd": 0,
+  "DefenseBase": 6,
+  "DefenseAdd": 0,
   "HP": 100,
-  "Gold": 4375
+  "Gold": 3625
 }

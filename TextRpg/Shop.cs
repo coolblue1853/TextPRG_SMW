@@ -8,17 +8,16 @@ namespace TextRpg
     class SellShopHandler : IGameStateHandler
     {
         bool isShowError = false;
-        string shopText = "";
         public void Handle(GameLoop context)
         {
             DataLoader dataLoader = new DataLoader();
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
-            Inventory.Instance.AddInventoryStringBuiler(true);
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
+            GameManager.gameLoop.inventory.AddInventoryStringBuiler(true);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -30,9 +29,9 @@ namespace TextRpg
                 {
                     context.ChangeState(GameState.Shop);
                 }
-                else if (num <= Inventory.Instance.GetInventorySize())
+                else if (num <= GameManager.gameLoop.inventory.GetInventorySize())
                 {
-                    Shop.Instance.SellItem(num);
+                    context.shop.SellItem(num);
                 }
                 else
                 {
@@ -52,23 +51,23 @@ namespace TextRpg
         public void Handle(GameLoop context)
         {
             DataLoader dataLoader = new DataLoader();
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
-            Shop.Instance.AddShopStringBuiler(true);
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Shop.banner,context.myPlayer.GetFormattedStats()), false, true);
+            context.shop.AddShopStringBuiler(true);
 
             if (shopText != "")
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc);
                 Utils.UpdateStringBuilder(shopText, true, false);
                 shopText = "";
             }
             else
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
             }
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -79,9 +78,9 @@ namespace TextRpg
                 {
                     context.ChangeState(GameState.Shop);
                 }
-                else if (num <= Shop.Instance.GetShopSize())
+                else if (num <= context.shop.GetShopSize())
                 {
-                    shopText = Shop.Instance.BuyItem(num);
+                    shopText = context.shop.BuyItem(num);
                 }
                 else
                 {
@@ -102,24 +101,24 @@ namespace TextRpg
         public void Handle(GameLoop context)
         {
             DataLoader dataLoader = new DataLoader();
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Shop.banner, context.myPlayer.GetFormattedStats()), false, true);
-            Shop.Instance.AddShopStringBuiler(false);
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Shop.buy);
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Shop.banner, context.myPlayer.GetFormattedStats()), false, true);
+            context.shop.AddShopStringBuiler(false);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Shop.buy);
 
             if (shopText != "")
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc);
                 Utils.UpdateStringBuilder(shopText, true, false);
                 shopText = "";
             }
             else
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
             }
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -151,13 +150,12 @@ namespace TextRpg
     }
     public class Shop
     {
-        public static Shop Instance { get; private set; } = new Shop();
         Dictionary<int, (Item, bool)> shopItems = new Dictionary<int, (Item, bool)>();
-
         public void Init() // static을 제거
         {
-            foreach (var value in Database.Instance.items)
+            foreach (var value in GameManager.gameLoop.database.items)
                 shopItems.Add(value._id, (value, false));
+
         }
         public  int GetShopSize()
         {
@@ -197,6 +195,7 @@ namespace TextRpg
 
         public string BuyItem(int index)
         {
+            Database database = GameManager.gameLoop.database;
             Item item = shopItems.ElementAt(index - 1).Value.Item1;
             // 안 산 물건이라면
             if (shopItems[item._id].Item2 == false)
@@ -204,24 +203,24 @@ namespace TextRpg
                 if(GameManager.gameLoop.myPlayer._gold >= item._price)
                 {
                     shopItems[item._id] = (item,true);
-                    Inventory.Instance.AddItem(item);
+                    GameManager.gameLoop.inventory.AddItem(item);
                     GameManager.gameLoop.myPlayer.ChangeGold(-item._price);
-                    return Database.Instance.sceneDatas.Shop.buy_Succ;
+                    return database.sceneDatas.Shop.buy_Succ;
                 }
                 else
-                    return Database.Instance.sceneDatas.Shop.buy_fail;
+                    return database.sceneDatas.Shop.buy_fail;
             }
             else
-                return Database.Instance.sceneDatas.Shop.buy_already;
+                return database.sceneDatas.Shop.buy_already;
         }
 
         public  void SellItem(int num)
         {
-            Item sellItem = Inventory.Instance.GetItem(num);
+            Item sellItem = GameManager.gameLoop.inventory.GetItem(num);
             shopItems[sellItem._id] = (sellItem, false);
             int sellPrice = (int)(sellItem._price * 0.85f);
             GameManager.gameLoop.myPlayer.ChangeGold(sellPrice);
-            Inventory.Instance.DeleteItem(sellItem, num);
+            GameManager.gameLoop.inventory.DeleteItem(sellItem, num);
         }
         public  void SetItemBuy(int idx)
         {

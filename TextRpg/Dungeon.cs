@@ -15,18 +15,18 @@ namespace TextRpg
             if (context.dungeonResultData.IsSuccess)
             {
                 myPlayer.ChangeExp(1);
-                Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Dungeon.reuslt_succ, context.dungeonResultData.ResultDict), false, true);
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+                Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Dungeon.reuslt_succ, context.dungeonResultData.ResultDict), false, true);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
             }
             else
             {
-                Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Dungeon.reuslt_fail, context.dungeonResultData.ResultDict), false, true);
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+                Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Dungeon.reuslt_fail, context.dungeonResultData.ResultDict), false, true);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
             }
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -59,15 +59,15 @@ namespace TextRpg
             Player myPlayer = context.myPlayer;
             DataLoader dataLoader = new DataLoader();
             Utils.ClearStringBuilder();
-            foreach (var value in Database.Instance.dungeonFormat)
+            foreach (var value in context.database.dungeonFormat)
             {
-                Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Dungeon.banner, value), false, false);
+                Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Dungeon.banner, value), false, false);
             }
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -123,12 +123,12 @@ namespace TextRpg
 
         public int GetDungeonCount()
         {
-            return Database.Instance.dungeonData.Count;
+            return GameManager.gameLoop.database.dungeonData.Count;
         }
 
         public (bool, int, int, string name) IntoDungoen(Player player, int dungeonNum)
         {
-            var nowDungeon = Database.Instance.dungeonData[dungeonNum - 1];
+            var nowDungeon = GameManager.gameLoop.database.dungeonData[dungeonNum - 1];
             GetPlayerData(player, out float playerAttack, out float playerDefense);
 
             // 방어력으로 결과 결정

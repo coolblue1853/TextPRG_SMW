@@ -40,7 +40,7 @@ namespace TextRpg
 
         public static Item Create(int itemIdx)
         {
-            var itemData = Database.Instance.itemData[itemIdx];
+            var itemData = GameManager.gameLoop.database.itemData[itemIdx];
             ItemType type = (ItemType)Enum.Parse(typeof(ItemType), itemData.Type);
 
 

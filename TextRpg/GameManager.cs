@@ -12,15 +12,20 @@ namespace TextRpg
     }
     class GameLoop
     {
+        // 플레이어 변수
         public  Player myPlayer;
-        static GameState state = GameState.None;
-        static int waitTime = 100;
+        //상태 변수
+        GameState state = GameState.None;
+        int waitTime = 100;
 
+        //게임 매니져
+        public Shop shop = new Shop();
+        public Inventory inventory = new Inventory();
+        public Database database = new Database();
+
+        //던전관련 변수
         public DungeonResultData dungeonResultData { get; set; } = new DungeonResultData();
         static bool? isRestore = null;
-
-        // 상태 핸들러 등록용
-     //   private Dictionary<GameState, Action> stateHandlers;
 
         public void Run()
         {
@@ -45,7 +50,7 @@ namespace TextRpg
         private void InitializeStateHandlers()
         {
             stateHandlers = new Dictionary<GameState, IGameStateHandler>
-    {
+        {
         { GameState.SetChar, new SetCharHandler() },
         { GameState.Town, new TownStateHandler() },
         { GameState.CheckStat, new CheckStatHandler() },
@@ -58,14 +63,14 @@ namespace TextRpg
         { GameState.DungeonResult, new DungeonResultHandler() },
         { GameState.Restore, new GoRestoreHandler() },
 
-    };
+        };
         }
 
         void Init()
         {
             myPlayer = new Player();
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
-            Database.Instance.SetData();
+            database.SetData();
             Player checkPlayer = SaveManager.Instance.LoadData();
             if (checkPlayer == null)
             {

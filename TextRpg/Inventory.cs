@@ -14,14 +14,15 @@ namespace TextRpg
 
         public void Handle(GameLoop context)
         {
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Inventory.banner, false, true);
-            Inventory.Instance.AddInventoryStringBuiler(true);
+           
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Inventory.banner, false, true);
+           context.inventory.AddInventoryStringBuiler(true);
 
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -32,9 +33,9 @@ namespace TextRpg
                 {
                     context.ChangeState(GameState.Inventory);
                 }
-                else if (num <= Inventory.Instance.GetInventorySize())
+                else if (num <= context.inventory.GetInventorySize())
                 {
-                    Inventory.Instance.EquipItem(num);
+                    context.inventory.EquipItem(num);
                 }
                 else
                 {
@@ -53,15 +54,15 @@ namespace TextRpg
      
         public void Handle(GameLoop context)
         {
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Inventory.banner, false, true);
-            Inventory.Instance.AddInventoryStringBuiler(false);
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Inventory.equip_mode);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Inventory.banner, false, true);
+            context.inventory.AddInventoryStringBuiler(false);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Inventory.equip_mode);
 
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, !isShowError);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, !isShowError);
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
                 isShowError = false;
             }
 
@@ -90,7 +91,6 @@ namespace TextRpg
 
     internal class Inventory
     {
-        public static Inventory Instance { get; private set; } = new Inventory();
         private  Dictionary<int, Item> invenDict = new Dictionary<int, Item>();
         private  Dictionary<ItemType, Item> equipDict = new Dictionary<ItemType, Item>();
 

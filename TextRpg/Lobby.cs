@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -11,11 +12,11 @@ namespace TextRpg
         bool isShowError = false;
         public void Handle(GameLoop context)
         {
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Town.town_welcome);
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Town.town_select, !isShowError, true);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Town.town_welcome);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Town.town_select, !isShowError, true);
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
             }
 
             isShowError = false;
@@ -59,16 +60,16 @@ namespace TextRpg
         {
             Player myPlayer = context.myPlayer;
             DataLoader dataLoader = new DataLoader();
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Stat.level_name, myPlayer.GetFormattedStats()), false, true);
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Stat.attack, myPlayer.GetFormattedStats()));
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Stat.level_name, myPlayer.GetFormattedStats()), false, true);
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Stat.attack, myPlayer.GetFormattedStats()));
             CheckAdditionalStat(myPlayer, AdditionalStat.ATK);
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Stat.defense, myPlayer.GetFormattedStats()));
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Stat.defense, myPlayer.GetFormattedStats()));
             CheckAdditionalStat(myPlayer, AdditionalStat.DEF);
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Stat.etc, myPlayer.GetFormattedStats()), !isShowError);
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Stat.etc, myPlayer.GetFormattedStats()), !isShowError);
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
             }
 
             isShowError = false;
@@ -111,13 +112,13 @@ namespace TextRpg
         bool isShowError = false;
         public void Handle(GameLoop context)
         {
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Intro.intro_welcome, true, true);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.Intro.intro_welcome, true, true);
             Utils.ReadLine(out string nickName);
 
 
             while (true)
             {
-                string input = GetJobInput(isShowError);
+                string input = GetJobInput(isShowError, context.database);
                 isShowError = false;
                 if (int.TryParse(input, out int num))   // 예외처리 받아야함 tryCatch 로 잡아보면 좋을듯?
                 {
@@ -125,7 +126,7 @@ namespace TextRpg
                     {
                         case 1:
                             context.myPlayer = new Warrior();
-                            context.myPlayer.SetInfo(nickName, Database.Instance.jobs[Utils.GetEnumIndex(PlayerType.Warrior)]);
+                            context.myPlayer.SetInfo(nickName, context.database.jobs[Utils.GetEnumIndex(PlayerType.Warrior)]);
                             context.ChangeState(GameState.Town);
                             return;
                         // TODO: 다른 직업도 추가
@@ -138,16 +139,16 @@ namespace TextRpg
                     isShowError = true;
             }
         }
-        string GetJobInput(bool showError)
+        string GetJobInput(bool showError, Database database)
         {
             if (showError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Intro.choose_job, false, true);
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, true);
+                Utils.UpdateStringBuilder(database.sceneDatas.Intro.choose_job, false, true);
+                Utils.UpdateStringBuilder(database.sceneDatas.Error.input_error, true);
             }
             else
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Intro.choose_job, true, true);
+                Utils.UpdateStringBuilder(database.sceneDatas.Intro.choose_job, true, true);
             }
 
             Utils.ReadLine(out string input);
@@ -164,24 +165,24 @@ namespace TextRpg
             Player myPlayer = context.myPlayer;
             DataLoader dataLoader = new DataLoader();
 
-            Utils.UpdateStringBuilder(dataLoader.FormatText(Database.Instance.sceneDatas.Restore.banner, myPlayer.GetFormattedStats()), false, true);
-            Utils.UpdateStringBuilder(Database.Instance.sceneDatas.ETC.base_etc, (!isShowError && isRestore == null));
+            Utils.UpdateStringBuilder(dataLoader.FormatText(context.database.sceneDatas.Restore.banner, myPlayer.GetFormattedStats()), false, true);
+            Utils.UpdateStringBuilder(context.database.sceneDatas.ETC.base_etc, (!isShowError && isRestore == null));
             if (isRestore != null)
             {
                 if (isRestore == true)
                 {
-                    Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Restore.succ, !isShowError);
+                    Utils.UpdateStringBuilder(context.database.sceneDatas.Restore.succ, !isShowError);
                 }
                 else
                 {
-                    Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Restore.fail, !isShowError);
+                    Utils.UpdateStringBuilder(context.database.sceneDatas.Restore.fail, !isShowError);
                 }
                 isRestore = null;
             }
 
             if (isShowError)
             {
-                Utils.UpdateStringBuilder(Database.Instance.sceneDatas.Error.input_error, isShowError, false);
+                Utils.UpdateStringBuilder(context.database.sceneDatas.Error.input_error, isShowError, false);
             }
 
             isShowError = false;

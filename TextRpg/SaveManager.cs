@@ -134,7 +134,7 @@ namespace TextRpg
         {
             // 1) 기존 인벤토리/장착 컬렉션 초기화
             var invenDict = new Dictionary<int, Item>();
-            Inventory.Instance.GetEquipDict().Clear();
+            GameManager.gameLoop.inventory.GetEquipDict().Clear();
 
             // 2) 각 DTO로부터 Item 인스턴스 생성
             foreach (var itemDto in data.Items)
@@ -144,13 +144,13 @@ namespace TextRpg
                     continue;
 
                 invenDict[itemDto.Id] = item;
-                Shop.Instance.SetItemBuy(item._id);
+                GameManager.gameLoop.shop.SetItemBuy(item._id);
 
                 if (itemDto.IsEquipped)
                 {
                     item.TogleEquipState();
-                    Inventory.Instance.GetEquipDict()[item._itemType] = item;
-                    Inventory.Instance.ActiveItemEffect(item);
+                    GameManager.gameLoop.inventory.GetEquipDict()[item._itemType] = item;
+                    GameManager.gameLoop.inventory.ActiveItemEffect(item);
                 }
             }
             return invenDict;
@@ -164,7 +164,7 @@ namespace TextRpg
         public  void SaveData(Player myPlayer)
         {
             saveService.Save(myPlayer);
-            invenService.Save(Inventory.Instance.GetInvenDict());
+            invenService.Save(GameManager.gameLoop.inventory.GetInvenDict());
         }
         public  Player LoadData()
         {
@@ -175,7 +175,7 @@ namespace TextRpg
             GameManager.gameLoop.myPlayer = player;
 
             var invDict = invenService.Load();
-            Inventory.Instance.SetInvenDict(invDict);
+            GameManager.gameLoop.inventory.SetInvenDict(invDict);
 
             return player;
         }
